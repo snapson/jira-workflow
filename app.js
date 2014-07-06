@@ -1,63 +1,38 @@
 var JiraApi = require('jira').JiraApi;
 var config = require('./config');
+var _;
+var express;
 var jira = new JiraApi(config.protocol, config.host, config.port, config.user, config.password, '2', true, true);
 
-
 /*
-jira.addComment('ECOMCHIV-1197', 'Comment send from node app', function (err, resp) {
-  console.log('Err: ', err);
-  console.log('resp: ', resp);
-});
+  TODO: Add lodash
+  TODO: Add express
+  TODO: Create route for single page
+  TODO: Create view for index route
+  TODO: Add method that allow to create subtasks to the parent task
+  TODO: Write test to all methods
 
-jira.getUsersIssues('"Nikita Zubarets"', true, function(error, issues) {
-  console.log('getUserIssues ERROR: ', error);
-  console.log('getUserIssues issues: ', issues);
-});
-
-jira.findIssue('ALOHA-741', function(error, response) {
-  console.log(response);
-});
+  IDEAS: Code review task must be inProgress by default
+  IDEAS: Write fixversion to input by hands
+  IDEAS: Write parent task to input too
+  IDEAS: Select neccessary subtasks like checkboxes
+  IDEAS: Write assignee person by hand
+  IDEAS: Get all assignee persons from jira api
 */
 
-var newIssue = {
-  'fields': {
-    'project': { 'key': 'ALOHA' },
-    'summary': 'Some summary for the ticket',
-    'description': 'Some description for the ticket',
-    'issuetype': { 'name': 'Bug' },
-    'customfield_10891': [ { 'id' : '13248' } ]
-  }
+var creator = function() {
+  this.subtasks = {
+    DEV: [
+      { summary: 'Create branch', description: 'Create new branch for issue.' },
+      { summary: 'Modify layout', description: 'Modify neccessary layout.' },
+      { summary: 'Modify tests', description: 'Modify neccessary tests.' },
+      { summary: 'Code review', description: 'Pass code review.' },
+      { summary: 'Test cases', description: 'Write some test cases' },
+      { summary: 'Merge to master', description: 'Merge code to astro gitlab.' }
+    ];
+    QA: [
+      { summary: 'Acceptance testing', description: '' },
+      { summary: 'Integration testing', description: '' }
+    ];
+  };
 };
-
-var createdIssue = {
-  id: 676253,
-  name: 'ALOHA-757'
-};
-
-var updateIssue = {
-  'update': {
-    'summary': [{'set': 'Some updated summary from nodeJS app'}]
-  }
-}
-
-jira.deleteIssue(createdIssueID, function(err, res) {
-  console.log(err);
-  console.log(res);
-});
-
-/*
-jira.getProject('ALOHA', function(err, res) {
-  console.log(err);
-  console.log(res);
-});
-
-jira.updateIssue(createdIssueID, updateIssue, function(err, res) {
-  console.log(err);
-  console.log(res);
-});
-
-jira.addNewIssue(newIssue, function(err,res) {
-  console.log(err);
-  console.log(res);
-})
-*/
