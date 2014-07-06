@@ -1,0 +1,17 @@
+doctype html
+html
+    title Jira tasker
+
+body
+  include header
+
+  .container
+    ul.list-unstyled
+      each value, index in tasker.getSubtasks()
+        li
+          h1= index
+          each val in value
+            h2= val.summary
+            p= val.description
+
+  include footer
