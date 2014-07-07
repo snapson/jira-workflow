@@ -4,18 +4,13 @@ var express = require('express')
 var http = require('http')
 var jade = require('jade');
 var path = require('path');
-var reload = require('reload');
-var templates = path.resolve(__dirname, 'templates');
 var app = express();
-var server;
 
 /*
-  TODO: Update livereload
-  TODO: Create package.json
-  TODO: Create route for single page
-  TODO: Create view for index route
+  TODO: Add livereload
   TODO: Write tests
   TODO: Include sass in project
+  TODO: Create package.json
 
   IDEAS: Add caching to project
   IDEAS: Add gziping
@@ -23,18 +18,24 @@ var server;
 */
 
 app.set('port', process.env.PORT || 3000);
-app.use(express.static(path.resolve(__dirname, 'assets')));
+app.set('views', path.resolve(__dirname, 'views'));
+app.set('templates', path.resolve(__dirname, 'templates'));
+app.set('assets', path.resolve(__dirname, 'assets'));
+
+app.use(express.static( app.get('assets') ));
+app.use(function(err, req, res, next){
+    res.status(err.status || 500);
+    log.error('Internal error(%d): %s',res.statusCode,err.message);
+    res.send({ error: err.message });
+    return;
+});
+app.use(function(req, res, next){
+  console.log('%s %s', req.method, req.url);
+  next();
+});
 
 app.get('/', function(req, res) {
-  res.send( jade.renderFile(path.resolve(templates, 'index.jade'), { tasker: tasker }) );
+  res.send( jade.renderFile(path.resolve(app.get('templates'), 'index.jade'), { tasker: tasker }) );
 });
 
-
-
-
-// For autoreload purposes
-server = http.createServer(app);
-reload(server, app);
-server.listen(app.get('port'), function(){
-  console.log("Web server listening on port " + app.get('port'));
-});
+app.listen( app.get('port') );

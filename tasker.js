@@ -25,8 +25,9 @@ var tasker = module.exports = {
       { summary: 'Merge to master', description: 'Merge code to astro gitlab.' }
     ],
     QA: [
-      { summary: 'Acceptance testing', description: '' },
-      { summary: 'Integration testing', description: '' }
+      { summary: 'Acceptance testing' },
+      { summary: 'Integration testing' },
+      { summary: 'Demo' }
     ]
   },
   init: function() {},
