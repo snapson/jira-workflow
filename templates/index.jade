@@ -1,17 +1,27 @@
 doctype html
 html
     title Jira tasker
-
 body
   include header
 
   .container
-    ul.list-unstyled
+    h1 Jira tasker
+    form.form-horizontal(role='form', action='/create', method='post')
       each value, index in tasker.getSubtasks()
-        li
-          h1= index
-          each val in value
-            h2= val.summary
-            p= val.description
+        .form-group
+          label.col-sm-2.control-label= index
+          .col-sm-10
+            each val in value
+              .checkbox
+                label
+                  input(type='checkbox', checked)
+                  = val.summary
+      .form-group
+        label.col-sm-2.control-label(for='qaAssignee') QA assignee
+        .col-sm-5
+          input.form-control#qaAssignee(type='text')
+      .form-group
+        .col-sm-offset-2.col-sm-10
+          button.btn.btn-default(type='submit') Create
 
   include footer
