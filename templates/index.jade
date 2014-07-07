@@ -6,20 +6,25 @@ body
 
   .container
     h1 Jira tasker
-    form.form-horizontal(role='form', action='/create', method='post')
+
+    form.form-horizontal#jiraForm(role='form', method='post')
+      .form-group
+        label.col-sm-2.control-label(for='parentTask') Parent task
+        .col-sm-5
+          input.form-control#parentTask(type='text', name='parentTask')
       each value, index in tasker.getSubtasks()
         .form-group
           label.col-sm-2.control-label= index
           .col-sm-10
-            each val in value
+            each val, i in value
               .checkbox
                 label
-                  input(type='checkbox', checked)
+                  input(type='checkbox', name=index + '_' + i, checked)
                   = val.summary
-      .form-group
+      // .form-group
         label.col-sm-2.control-label(for='qaAssignee') QA assignee
         .col-sm-5
-          input.form-control#qaAssignee(type='text')
+          input.form-control#qaAssignee(type='text', name='qaAssignee')
       .form-group
         .col-sm-offset-2.col-sm-10
           button.btn.btn-default(type='submit') Create

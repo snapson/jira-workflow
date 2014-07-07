@@ -1,15 +1,14 @@
 var _ = require('lodash');
+var path = require('path');
 var JiraApi = require('jira').JiraApi;
 var config = require('./config');
+var subtask = require('./subtask');
 
 /*
-  TODO: Add method that allow to create subtasks to the parent task
   TODO: Write test to all methods
+  TODO: Add issue exist checking
 
   IDEAS: Code review task must be in progress by default
-  IDEAS: Write fixversion to input by hands
-  IDEAS: Write parent task to input too
-  IDEAS: Select neccessary subtasks like checkboxes
   IDEAS: Write assignee person by hand
   IDEAS: Get all assignee persons from jira api
 */
@@ -30,7 +29,6 @@ var tasker = module.exports = {
       { summary: 'Demo' }
     ]
   },
-  init: function() {},
   getSubtasks: function() { return this.subtasks; },
   getConnect: function() {
     return new JiraApi(
@@ -43,5 +41,53 @@ var tasker = module.exports = {
       true,             // verbose<bool>
       true              // strictSSL<bool>
     );
+  },
+  setProject: function(parentTask) {
+    subtask.fields.project.key = parentTask.split('-')[0].toUpperCase();
+    subtask.fields.parent.key = parentTask.toUpperCase();
+  },
+  setFields: function(type, index) {
+    var current = this.subtasks[type][index];
+
+    if (current) {
+      subtask.fields.summary = [type, ': ', current.summary].join('');
+      subtask.fields.description = current.description ? current.description : '';
+
+      return subtask;
+    } else {
+      return false;
+    }
+  },
+  setData: function(data) {
+    var that = this;
+    var jira = this.getConnect();
+    var taskTest = /\w+\-\d+/g;
+    var devSubtask, qaSubtask, index;
+
+    if (_.isEmpty(data.parentTask) || !taskTest.test(data.parentTask)) {
+      return { error: 'Parent task must not be empy and must be like aloha-747' };
+    }
+
+    this.setProject(data.parentTask);
+
+    _.forIn(data, function(value, key) {
+      if (_.isEqual(value, 'on')) {
+        index = key.split('_')[1];
+
+        if ( key.indexOf('DEV') != -1 ) {
+          devSubtask = that.setFields('DEV', index);
+
+          jira.addNewIssue(devSubtask);
+        } else if ( key.indexOf('QA') != -1 ) {
+          qaSubtask = that.setFields('QA', index);
+
+          jira.addNewIssue(qaSubtask);
+        }
+      }
+    });
+
+    return {
+      uri: path.join('https://contegixapp1.livenation.com/jira/browse/', data.parentTask.toUpperCase())
+    }
   }
 }
