@@ -77,11 +77,15 @@ var tasker = module.exports = {
         if ( key.indexOf('DEV') != -1 ) {
           devSubtask = that.setFields('DEV', index);
 
-          jira.addNewIssue(devSubtask);
+          jira.addNewIssue(devSubtask, function(err, body) {
+            console.log('DEV subtask is successfully created');
+          });
         } else if ( key.indexOf('QA') != -1 ) {
           qaSubtask = that.setFields('QA', index);
 
-          jira.addNewIssue(qaSubtask);
+          jira.addNewIssue(qaSubtask, function(err, body) {
+            console.log('QA subtask is successfully created');
+          });
         }
       }
     });
