@@ -1,0 +1,24 @@
+{
+  "name": "jira.workflow",
+  "version": "0.0.1",
+  "description": "Application that create jira subtasks per click",
+  "author": "Nikita Zubarets <zubarets@gmail.com> (http://ua.linkedin.com/pub/nikita-zubarets/62/a/a1b)",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/snapson/jira-workflow"
+  },
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "lodash": "2.x",
+    "express": "4.x",
+    "nodemon": "1.x",
+    "jade": "1.x",
+    "body-parser": "1.x",
+    "jira": "0.x"
+  },
+  "scripts": {
+    "start": "nodemon application/app.js",
+    "preinstall": "npm i -g nodemon"
+  }
+}
