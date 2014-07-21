@@ -1,14 +1,16 @@
 var _ = require('lodash');
 var path = require('path');
+var async = require('async');
 var JiraApi = require('jira').JiraApi;
 var config = require('./config');
 var subtask = require('./subtask');
 
 /*
+  TODO: Code review task must be in progress by default
+  TODO: User auth before task creating
   TODO: Write test to all methods
   TODO: Add issue exist checking
 
-  IDEAS: Code review task must be in progress by default
   IDEAS: Write assignee person by hand
   IDEAS: Get all assignee persons from jira api
 */
@@ -29,7 +31,7 @@ var tasker = module.exports = {
       { summary: 'Demo' }
     ]
   },
-  getSubtasks: function() { return this.subtasks; },
+  getAllSubtasks: function() { return this.subtasks; },
   getConnect: function() {
     return new JiraApi(
       config.protocol,  // protocol<string>
@@ -58,37 +60,75 @@ var tasker = module.exports = {
       return false;
     }
   },
-  setData: function(data) {
+  setSelectedSubtasks: function(data) {
     var that = this;
-    var jira = this.getConnect();
-    var taskTest = /\w+\-\d+/g;
-    var devSubtask, qaSubtask, index;
-
-    if (_.isEmpty(data.parentTask) || !taskTest.test(data.parentTask)) {
-      return { error: 'Parent task must not be empy and must be like aloha-747' };
-    }
-
-    this.setProject(data.parentTask);
+    var index;
+    var selected = {
+      DEV: [],
+      QA: []
+    };
 
     _.forIn(data, function(value, key) {
       if (_.isEqual(value, 'on')) {
         index = key.split('_')[1];
 
         if ( key.indexOf('DEV') != -1 ) {
-          devSubtask = that.setFields('DEV', index);
-
-          jira.addNewIssue(devSubtask, function(err, body) {
-            console.log('DEV subtask is successfully created');
-          });
+          selected.DEV.push(that.subtasks['DEV'][index]);
         } else if ( key.indexOf('QA') != -1 ) {
-          qaSubtask = that.setFields('QA', index);
-
-          jira.addNewIssue(qaSubtask, function(err, body) {
-            console.log('QA subtask is successfully created');
-          });
+          selected.QA.push(that.subtasks['QA'][index]);
         }
       }
     });
+
+    that.selectedSubtasks = selected;
+  },
+  createTasks: function() {
+    var that = this;
+
+    _.forIn(this.selectedSubtasks, function(value, key) {
+      // key === DEV || QA
+      // value === tasks
+      that.createTask(value, key);
+    });
+  },
+  createTask: function(tasks, type) {
+    var that = this;
+    var jira = this.getConnect();
+    var count = 0;
+
+    async.whilst(
+      function () { return count <= (tasks.length - 1); },
+      function (callback) {
+
+        jira.addNewIssue(that.setFields(type, count), function(err, body) {
+          if (!err) {
+            console.log('Subtask is successfully created');
+            count++;
+            callback();
+          } else {
+            console.log('Some error is occured');
+          }
+        });
+
+        count++;
+        callback();
+
+      },
+      function (err) {
+        console.log('Complete -> ', err);
+      }
+    );
+  },
+  setData: function(data) {
+    var taskTest = /\w+\-\d+/g;
+
+    if (_.isEmpty(data.parentTask) || !taskTest.test(data.parentTask)) {
+      return { error: 'Parent task must not be empy and must be like aloha-747' };
+    }
+
+    this.setProject(data.parentTask);
+    this.setSelectedSubtasks(data);
+    this.createTasks();
 
     return {
       uri: path.join('https://contegixapp1.livenation.com/jira/browse/', data.parentTask.toUpperCase())

@@ -11,15 +11,15 @@ body
       .form-group
         label.col-sm-2.control-label(for='parentTask') Parent task
         .col-sm-5
-          input.form-control#parentTask(type='text', name='parentTask')
-      each value, index in tasker.getSubtasks()
+          input.form-control#parentTask(type='text', name='parentTask', value='aloha-757')
+      each value, index in tasker.getAllSubtasks()
         .form-group
           label.col-sm-2.control-label= index
           .col-sm-10
             each val, i in value
               .checkbox
                 label
-                  input(type='checkbox', name=index + '_' + i, checked)
+                  input(type='checkbox', name=index + '_' + i)
                   = val.summary
       // .form-group
         label.col-sm-2.control-label(for='qaAssignee') QA assignee
