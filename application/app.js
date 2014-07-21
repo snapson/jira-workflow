@@ -8,11 +8,9 @@ var bodyParser = require('body-parser');
 var app = express();
 
 /*
-  TODO: Open task in new tab
   TODO: Add livereload
   TODO: Write tests
   TODO: Include sass in project
-  TODO: Create package.json
 
   IDEAS: Add caching to project
   IDEAS: Add gziping

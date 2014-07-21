@@ -15,7 +15,8 @@
     "nodemon": "1.x",
     "jade": "1.x",
     "body-parser": "1.x",
-    "jira": "0.x"
+    "jira": "0.x",
+    "async": "1.4.x"
   },
   "scripts": {
     "start": "nodemon application/app.js",
