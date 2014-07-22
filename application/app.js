@@ -46,16 +46,16 @@ app.route('/')
 
     async.series([
       function(cb) {
-        var created = tasker.init(req.body, cb);
-        if ( created && created.error ) {
-          res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: created.error }) );
-        }
+        tasker.init(req.body, cb);
       },
       function(cb) {
         res.redirect(tasker.getURI());
-        cb();
       }
-    ]);
+    ], function(err) {
+      if (err) {
+        res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: err.toString() }) );
+      }
+    });
 
   });
 

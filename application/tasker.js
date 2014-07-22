@@ -127,15 +127,26 @@ var tasker = module.exports = {
       }
     );
   },
-  init: function(data, done) {
-    var that = this;
-    var taskTest = /\w+\-\d+/g;
+  checkData: function(data, next) {
+    var parentTest = /\w+\-\d+/g;
 
-    if (_.isEmpty(data.parentTask) || !taskTest.test(data.parentTask)) {
-      return { error: 'Parent task must not be empy and must be like aloha-747' };
+    if (_.isEmpty(data.parentTask) || !parentTest.test(data.parentTask)) {
+      next( new Error('Parent task must not be empy and must be like aloha-747.') ); // Become from init
     }
 
+    if (_.indexOf(_.values(data), 'on') < 0) {
+      next( new Error('You must select one or more tasks.') ); // Become from init
+    }
+
+    next();
+  },
+  init: function(data, done) {
+    var that = this;
+
     async.series([
+      function(cb) {
+        that.checkData(data, cb);
+      },
       function(cb) {
         that.setProject(data.parentTask, cb);
       },
@@ -145,10 +156,13 @@ var tasker = module.exports = {
       function(cb) {
         that.createTasks(cb);
       }
-    ], function(err, resp) {
+    ], function(err) {
       if (!err) {
         console.log('Complete all work with tasker');
         done(); // Become from app.js
+      } else {
+        console.log('Error is occured ', err);
+        done(err); // Become from app.js
       }
     });
   }
