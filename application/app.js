@@ -46,7 +46,7 @@ app.route('/')
 
     async.series([
       function(cb) {
-        var created = tasker.setData(req.body, cb);
+        var created = tasker.init(req.body, cb);
         if ( created && created.error ) {
           res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: created.error }) );
         }

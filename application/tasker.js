@@ -17,6 +17,7 @@ var subtask = require('./subtask');
 
 var tasker = module.exports = {
   project: null,
+  baseURI: 'https://contegixapp1.livenation.com/jira/browse/',
   subtasks: {
     DEV: [
       { summary: 'Create branch', description: 'Create new branch for issue.' },
@@ -45,14 +46,12 @@ var tasker = module.exports = {
       true              // strictSSL<bool>
     );
   },
-  getURI: function() {
-    return path.join('https://contegixapp1.livenation.com/jira/browse/', this.project);
-  },
+  getURI: function() { return path.join(this.baseURI, this.project); },
   setProject: function(parentTask, done) {
     subtask.fields.project.key = parentTask.split('-')[0].toUpperCase();
     subtask.fields.parent.key = parentTask.toUpperCase();
     this.project = parentTask.toUpperCase();
-    done();
+    done(); // Become from init
   },
   setFields: function(type, index) {
     var current = this.subtasks[type][index];
@@ -87,26 +86,26 @@ var tasker = module.exports = {
     });
 
     that.selectedSubtasks = selected;
-    done();
+    done(); // Become from init
   },
   createTasks: function(done) {
     var that = this;
 
     async.series([
       function(cb) {
-        that.createTask(that.selectedSubtasks.DEV, 'DEV', cb);
+        that.createSingleTask(that.selectedSubtasks.DEV, 'DEV', cb);
       },
       function(cb) {
-        that.createTask(that.selectedSubtasks.QA, 'QA', cb);
+        that.createSingleTask(that.selectedSubtasks.QA, 'QA', cb);
       }
     ], function(err, resp) {
       console.log('Complete creating all tasks');
-      done();
+      done(); // Become from init
     });
   },
-  createTask: function(tasks, type, done) {
+  createSingleTask: function(tasks, type, done) {
     var that = this;
-    var jira = this.getConnect();
+    var jira = that.getConnect();
     var count = 0;
 
     async.whilst(
@@ -124,11 +123,11 @@ var tasker = module.exports = {
       },
       function (err) {
         err && (console.log('Some error is occured', err));
-        !err && (done());
+        !err && (done()); // Become from createTasks
       }
     );
   },
-  setData: function(data, done) {
+  init: function(data, done) {
     var that = this;
     var taskTest = /\w+\-\d+/g;
 
@@ -152,6 +151,5 @@ var tasker = module.exports = {
         done(); // Become from app.js
       }
     });
-
   }
 }
