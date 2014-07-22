@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 /*
+  TODO: Add user login route
   TODO: Open jira task in new tab
   TODO: Add livereload
   TODO: Write tests
@@ -38,6 +39,13 @@ app.use(function(req, res, next){
   next();
 });
 
+// Login user to Jira
+app.route('/login')
+  .get(function(req, res) {
+    res.send( jade.renderFile(path.resolve(app.get('templates'), 'login.jade')));
+  });
+
+// Work with tasks creation
 app.route('/')
   .get(function(req, res) {
     res.send( jade.renderFile(path.resolve(app.get('templates'), 'index.jade'), { tasker: tasker }) );

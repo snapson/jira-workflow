@@ -6,8 +6,7 @@ var config = require('./config');
 var subtask = require('./subtask');
 
 /*
-  TODO: Create progress bar view for creating process
-  TODO: User auth before task creating
+  TODO: Add user login to jira
   TODO: Write test to all methods
   TODO: Add issue exist checking
 
