@@ -48,10 +48,11 @@ var tasker = module.exports = {
   getURI: function() {
     return path.join('https://contegixapp1.livenation.com/jira/browse/', this.project);
   },
-  setProject: function(parentTask) {
+  setProject: function(parentTask, done) {
     subtask.fields.project.key = parentTask.split('-')[0].toUpperCase();
     subtask.fields.parent.key = parentTask.toUpperCase();
     this.project = parentTask.toUpperCase();
+    done();
   },
   setFields: function(type, index) {
     var current = this.subtasks[type][index];
@@ -65,7 +66,7 @@ var tasker = module.exports = {
       return false;
     }
   },
-  setSelectedSubtasks: function(data) {
+  setSelectedSubtasks: function(data, done) {
     var that = this;
     var index;
     var selected = {
@@ -86,17 +87,24 @@ var tasker = module.exports = {
     });
 
     that.selectedSubtasks = selected;
+    done();
   },
-  createTasks: function() {
+  createTasks: function(done) {
     var that = this;
 
-    _.forIn(this.selectedSubtasks, function(value, key) {
-      // key === DEV || QA
-      // value === tasks
-      that.createTask(value, key);
+    async.series([
+      function(cb) {
+        that.createTask(that.selectedSubtasks.DEV, 'DEV', cb);
+      },
+      function(cb) {
+        that.createTask(that.selectedSubtasks.QA, 'QA', cb);
+      }
+    ], function(err, resp) {
+      console.log('Complete creating all tasks');
+      done();
     });
   },
-  createTask: function(tasks, type) {
+  createTask: function(tasks, type, done) {
     var that = this;
     var jira = this.getConnect();
     var count = 0;
@@ -115,19 +123,35 @@ var tasker = module.exports = {
         });
       },
       function (err) {
-        console.log('Complete -> ', err);
+        err && (console.log('Some error is occured', err));
+        !err && (done());
       }
     );
   },
-  setData: function(data) {
+  setData: function(data, done) {
+    var that = this;
     var taskTest = /\w+\-\d+/g;
 
     if (_.isEmpty(data.parentTask) || !taskTest.test(data.parentTask)) {
       return { error: 'Parent task must not be empy and must be like aloha-747' };
     }
 
-    this.setProject(data.parentTask);
-    this.setSelectedSubtasks(data);
-    this.createTasks();
+    async.series([
+      function(cb) {
+        that.setProject(data.parentTask, cb);
+      },
+      function(cb) {
+        that.setSelectedSubtasks(data, cb);
+      },
+      function(cb) {
+        that.createTasks(cb);
+      }
+    ], function(err, resp) {
+      if (!err) {
+        console.log('Complete all work with tasker');
+        done(); // Become from app.js
+      }
+    });
+
   }
 }
