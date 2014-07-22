@@ -6,7 +6,7 @@ var config = require('./config');
 var subtask = require('./subtask');
 
 /*
-  TODO: Code review task must be in progress by default
+  TODO: Create progress bar view for creating process
   TODO: User auth before task creating
   TODO: Write test to all methods
   TODO: Add issue exist checking
