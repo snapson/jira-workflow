@@ -4,7 +4,7 @@ html
 body
   include header
 
-  .container
+  .container#createBlock
     h1 Jira tasker
 
     form.form-horizontal#jiraForm(role='form', method='post')
@@ -28,5 +28,7 @@ body
       .form-group
         .col-sm-offset-2.col-sm-10
           button.btn.btn-default(type='submit') Create
+
+  include progress
 
   include footer
