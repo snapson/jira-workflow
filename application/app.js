@@ -4,10 +4,12 @@ var express = require('express')
 var http = require('http')
 var jade = require('jade');
 var path = require('path');
+var async = require('async');
 var bodyParser = require('body-parser');
 var app = express();
 
 /*
+  TODO: Open jira task in new tab
   TODO: Add livereload
   TODO: Write tests
   TODO: Include sass in project
@@ -41,16 +43,20 @@ app.route('/')
     res.send( jade.renderFile(path.resolve(app.get('templates'), 'index.jade'), { tasker: tasker }) );
   })
   .post(function(req, res) {
-    var created = tasker.setData(req.body);
 
-    if ( created && created.error ) {
-      res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: created.error }) );
-    } else {
-      // TODO: remove this
-      setTimeout(function() {
-        res.redirect(created.uri);
-      }, 2000);
-    }
+    async.waterfall([
+      function(callback) {
+        var created = tasker.setData(req.body);
+        if ( created && created.error ) {
+          res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: created.error }) );
+        }
+      },
+      function(created, callback) {
+        res.redirect(tasker.getUri());
+        callback();
+      }
+    ]);
+
   });
 
 app.listen( app.get('port') );

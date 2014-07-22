@@ -16,6 +16,7 @@ var subtask = require('./subtask');
 */
 
 var tasker = module.exports = {
+  project: null,
   subtasks: {
     DEV: [
       { summary: 'Create branch', description: 'Create new branch for issue.' },
@@ -44,9 +45,13 @@ var tasker = module.exports = {
       true              // strictSSL<bool>
     );
   },
+  getURI: function() {
+    return path.join('https://contegixapp1.livenation.com/jira/browse/', this.project);
+  },
   setProject: function(parentTask) {
     subtask.fields.project.key = parentTask.split('-')[0].toUpperCase();
     subtask.fields.parent.key = parentTask.toUpperCase();
+    this.project = parentTask.toUpperCase();
   },
   setFields: function(type, index) {
     var current = this.subtasks[type][index];
@@ -99,7 +104,6 @@ var tasker = module.exports = {
     async.whilst(
       function () { return count <= (tasks.length - 1); },
       function (callback) {
-
         jira.addNewIssue(that.setFields(type, count), function(err, body) {
           if (!err) {
             console.log('Subtask is successfully created');
@@ -109,10 +113,6 @@ var tasker = module.exports = {
             console.log('Some error is occured');
           }
         });
-
-        count++;
-        callback();
-
       },
       function (err) {
         console.log('Complete -> ', err);
@@ -129,9 +129,5 @@ var tasker = module.exports = {
     this.setProject(data.parentTask);
     this.setSelectedSubtasks(data);
     this.createTasks();
-
-    return {
-      uri: path.join('https://contegixapp1.livenation.com/jira/browse/', data.parentTask.toUpperCase())
-    }
   }
 }
