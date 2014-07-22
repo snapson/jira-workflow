@@ -44,16 +44,16 @@ app.route('/')
   })
   .post(function(req, res) {
 
-    async.waterfall([
-      function(callback) {
-        var created = tasker.setData(req.body);
+    async.series([
+      function(cb) {
+        var created = tasker.setData(req.body, cb);
         if ( created && created.error ) {
           res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: created.error }) );
         }
       },
-      function(created, callback) {
-        res.redirect(tasker.getUri());
-        callback();
+      function(cb) {
+        res.redirect(tasker.getURI());
+        cb();
       }
     ]);
 
