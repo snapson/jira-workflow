@@ -7,10 +7,10 @@ body
   link(rel='stylesheet', href='/css/login.css')
 
   .container#loginBlock
-    form.form-signin(role='form')
+    form.form-signin(role='form', method='post')
       h2  Please sign in to Jira
-      input.form-control(type='text', name='username')
-      input.form-control(type='password', name='password')
+      input.form-control.has-error(type='text', name='username', placeholder='nikita.zubarets')
+      input.form-control(type='password', name='password', placeholder='password123')
       input.btn.btn-lg.btn-primary.btn-block(type='submit', value='Sign in')
 
   include footer

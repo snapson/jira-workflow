@@ -1,5 +1,6 @@
 
 var tasker = require('./tasker');
+var login = require('./login');
 var express = require('express')
 var http = require('http')
 var jade = require('jade');
@@ -20,7 +21,7 @@ var app = express();
   IDEAS: Maybe use Grunt or Bower?
 */
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 5353);
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('templates', path.resolve(__dirname, 'templates'));
 app.set('assets', path.resolve(__dirname, 'assets'));
@@ -39,10 +40,33 @@ app.use(function(req, res, next){
   next();
 });
 
+// Error handling
+app.route('/error')
+  .get(function(req, res) {
+    res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: app.get('error') }) );
+  });
+
 // Login user to Jira
 app.route('/login')
   .get(function(req, res) {
     res.send( jade.renderFile(path.resolve(app.get('templates'), 'login.jade')));
+  })
+  .post(function(req, res) {
+
+    async.series([
+      function(cb) {
+        login.init(req.body, cb);
+      },
+      function(cb) {
+        console.log('Everything is OK, bro');
+      }
+    ], function(err) {
+      if (err) {
+        app.set('error', err.toString());
+        res.redirect('/error');
+      }
+    });
+
   });
 
 // Work with tasks creation
@@ -61,7 +85,8 @@ app.route('/')
       }
     ], function(err) {
       if (err) {
-        res.send( jade.renderFile(path.resolve(app.get('templates'), 'error.jade'), { error: err.toString() }) );
+        app.set('error', err.toString());
+        res.redirect('/error');
       }
     });
 
