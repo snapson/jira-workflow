@@ -16,10 +16,13 @@
     "jade": "1.x",
     "body-parser": "1.x",
     "jira": "0.x",
-    "async": "1.4.x"
+    "async": "1.4.x",
+    "chai": "1.9.x",
+    "superagent": "0.x"
   },
   "scripts": {
     "start": "nodemon application/app.js",
-    "preinstall": "npm i -g nodemon"
+    "preinstall": "npm i -g nodemon; npm install -g mocha",
+    "test": "mocha --reporter tap application/test"
   }
 }
