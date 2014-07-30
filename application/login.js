@@ -5,10 +5,7 @@ var JiraApi = require('jira').JiraApi;
 var config = require('./config');
 
 /*
-  TODO: Login user to jira
-  TODO: Pass logined Jira object to tasker.js
-
-  TEST: If checkbox checked take values from config.
+  TEST: If remember checkbox is checked take values from config.
  */
 var login = module.exports = {
   credentials: {
@@ -17,14 +14,13 @@ var login = module.exports = {
   },
   connect: null,
   handling: function(data, next) {
-    // next() become from init
     _.isEmpty(data.username) && next( new Error('You must fill the username field!') );
     _.isEmpty(data.password) && next( new Error('You must fill the password field!') );
 
     if (!_.isEmpty(data.username) && !_.isEmpty(data.password)) {
       this.credentials.user = data.username;
       this.credentials.pass = data.password;
-      next();
+      next(); // next() become from init
     }
   },
   loginToJira: function(next) {
@@ -62,7 +58,7 @@ var login = module.exports = {
         that.checkLogin(next);
       }
     ], function(err) {
-      done(err);
+      done(err); // done() become from app.js
     });
   }
 };

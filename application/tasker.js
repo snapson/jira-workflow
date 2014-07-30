@@ -1,12 +1,11 @@
 var _ = require('lodash');
 var path = require('path');
 var async = require('async');
-var JiraApi = require('jira').JiraApi;
 var config = require('./config');
 var subtask = require('./subtask');
+var login = require('./login');
 
 /*
-  TODO: Add user login to jira
   TODO: Write test to all methods
   TODO: Add issue exist checking
 
@@ -33,18 +32,6 @@ var tasker = module.exports = {
     ]
   },
   getAllSubtasks: function() { return this.subtasks; },
-  getConnect: function() {
-    return new JiraApi(
-      config.protocol,  // protocol<string>
-      config.host,      // host<string>
-      config.port,      // port<int>
-      config.user,      // user<string>
-      config.password,  // password<string>
-      '2',              // Jira API Version<string>:  Known to work with 2 and 2.0.alpha1
-      true,             // verbose<bool>
-      true              // strictSSL<bool>
-    );
-  },
   getURI: function() { return path.join(this.baseURI, this.project); },
   setProject: function(parentTask, done) {
     subtask.fields.project.key = parentTask.split('-')[0].toUpperCase();
@@ -104,13 +91,13 @@ var tasker = module.exports = {
   },
   createSingleTask: function(tasks, type, done) {
     var that = this;
-    var jira = that.getConnect();
+    var jiraConnect = login.connect;
     var count = 0;
 
     async.whilst(
       function () { return count <= (tasks.length - 1); },
       function (callback) {
-        jira.addNewIssue(that.setFields(type, count), function(err, body) {
+        jiraConnect.addNewIssue(that.setFields(type, count), function(err, body) {
           if (!err) {
             console.log('Subtask is successfully created');
             count++;
