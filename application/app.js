@@ -85,7 +85,7 @@ app.route('/')
         tasker.init(req.body, cb);
       },
       function(cb) {
-        res.redirect(tasker.getURI());
+        res.redirect(tasker.getURI()); // Go to ticket URI
       }
     ], function(err) {
       if (err) {
