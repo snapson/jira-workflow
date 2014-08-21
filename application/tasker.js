@@ -39,8 +39,8 @@ var tasker = module.exports = {
     this.project = parentTask.toUpperCase();
     done(); // Become from init
   },
-  setFields: function(type, index) {
-    var current = this.subtasks[type][index];
+  setFields: function(type, summ) {
+    var current = _.find(this.subtasks[type], { summary: summ });
 
     if (current) {
       subtask.fields.summary = [type, ': ', current.summary].join('');
@@ -72,6 +72,7 @@ var tasker = module.exports = {
     });
 
     that.selectedSubtasks = selected;
+
     done(); // Become from init
   },
   createTasks: function(done) {
@@ -97,7 +98,7 @@ var tasker = module.exports = {
     async.whilst(
       function () { return count <= (tasks.length - 1); },
       function (callback) {
-        jiraConnect.addNewIssue(that.setFields(type, count), function(err, body) {
+        jiraConnect.addNewIssue(that.setFields(type, tasks[count].summary), function(err, body) {
           if (!err) {
             console.log('Subtask is successfully created');
             count++;
