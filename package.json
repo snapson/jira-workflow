@@ -16,7 +16,7 @@
     "jade": "1.x",
     "body-parser": "1.x",
     "jira": "0.x",
-    "async": "1.4.x",
+    "async": "0.x",
     "chai": "1.9.x",
     "superagent": "0.x"
   },
