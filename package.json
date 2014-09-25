@@ -8,7 +8,6 @@
     "url" : "https://github.com/snapson/jira-workflow"
   },
   "private": true,
-  "devDependencies": {},
   "dependencies": {
     "lodash": "2.x",
     "express": "4.x",
