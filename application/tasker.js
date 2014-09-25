@@ -23,7 +23,8 @@ var tasker = module.exports = {
       { summary: 'Modify tests', description: 'Modify neccessary tests.' },
       { summary: 'Code review', description: 'Pass code review.' },
       { summary: 'Test cases', description: 'Write some test cases' },
-      { summary: 'Merge to master', description: 'Merge code to astro gitlab.' }
+      { summary: 'Merge to master', description: 'Merge code to astro gitlab.' },
+      { summary: 'Merge to svn', description: 'Merge code to svn develop.' }
     ],
     QA: [
       { summary: 'Acceptance testing' },
