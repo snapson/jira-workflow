@@ -23,6 +23,6 @@
   "scripts": {
     "start": "nodemon application/app.js",
     "preinstall": "npm i -g nodemon; npm install -g mocha",
-    "test": "mocha --reporter tap application/test"
+    "//": "mocha --reporter tap application/test"
   }
 }
