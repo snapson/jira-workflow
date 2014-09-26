@@ -5,14 +5,6 @@ var config = require('./config');
 var subtask = require('./subtask');
 var login = require('./login');
 
-/*
-  TODO: Write test to all methods
-  TODO: Add issue exist checking
-
-  IDEAS: Write assignee person by hand
-  IDEAS: Get all assignee persons from jira api
-*/
-
 var tasker = module.exports = {
   project: null,
   baseURI: 'https://contegixapp1.livenation.com/jira/browse/',

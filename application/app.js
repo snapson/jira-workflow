@@ -9,17 +9,6 @@ var async = require('async');
 var bodyParser = require('body-parser');
 var app = express();
 
-/*
-  TODO: Open jira task in new tab
-  TODO: Add livereload
-  TODO: Write tests
-  TODO: Include sass in project
-
-  IDEAS: Add caching to project
-  IDEAS: Add gziping
-  IDEAS: Maybe use Grunt or Bower?
-*/
-
 app.set('port', process.env.PORT || 5353);
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('templates', path.resolve(__dirname, 'templates'));

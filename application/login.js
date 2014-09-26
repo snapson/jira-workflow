@@ -4,9 +4,6 @@ var async = require('async');
 var JiraApi = require('jira').JiraApi;
 var config = require('./config');
 
-/*
-  TEST: If remember checkbox is checked take values from config.
- */
 var login = module.exports = {
   credentials: {
     user: '',
